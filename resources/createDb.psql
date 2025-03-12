@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS intellicar.devicecatalogues (
+    slno SERIAL PRIMARY KEY,
+    skucode TEXT NOT NULL UNIQUE,
+    productname TEXT NOT NULL,
+    description TEXT,
+    internalbattery TEXT,
+    specification TEXT,
+    compatiblenations TEXT,
+    numberofinputs TEXT,
+    numberofoutputs TEXT,
+    drawinglink2d TEXT,
+    stpfilelink TEXT,
+    devicepicturelink TEXT,
+    specsheetlink TEXT,
+    dimensions TEXT,
+    stage TEXT
+);
+
