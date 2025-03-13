@@ -1,6 +1,7 @@
 package main
 
 import (
+	"catalogue/cache"
 	"catalogue/routes"
 	"log"
 	"os"
@@ -31,6 +32,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	connectDB(dbUrl)
+	cache.InitRedis()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()

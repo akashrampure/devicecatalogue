@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"catalogue/cache"
 	"catalogue/models"
 	"fmt"
 	"net/http"
@@ -34,22 +35,45 @@ func GetCatalogue(c *gin.Context) {
 		return
 	}
 
+	cacheData, err := cache.GetCache(skuCode)
+	if err != nil {
+		fmt.Println("Cache not found for sku code:", skuCode)
+	}
+	if cacheData != nil {
+		c.JSON(http.StatusOK, cacheData)
+		return
+	}
+
 	var catalogue models.DeviceCatalogue
 	result := DB.First(&catalogue, "skucode = ?", skuCode)
 	if result.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Catalogue not found"})
 		return
 	}
+
+	cache.SetCache(skuCode, catalogue)
 	c.JSON(http.StatusOK, catalogue)
 }
 
 func GetAllCatalogue(c *gin.Context) {
+	cacheKey := "getallcatalogue"
+	cacheData, err := cache.GetCache(cacheKey)
+	if err != nil {
+		fmt.Println("Cache not found for:", cacheKey)
+	}
+	if cacheData != nil {
+		c.JSON(http.StatusOK, cacheData)
+		return
+	}
+
 	var catalogues []models.DeviceCatalogue
 	result := DB.Find(&catalogues)
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "No catalogues found"})
 		return
 	}
+
+	cache.SetCache(cacheKey, catalogues)
 	c.JSON(http.StatusOK, catalogues)
 }
 
